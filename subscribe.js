@@ -1,46 +1,47 @@
 var PubNub = require('pubnub')
+var async = require('async')
 
-function publish() {
+//array stack for async parallel
+var subscribers = [];
 
-	 pubnub = new PubNub({
-	 publishKey : 'demo',
-	 subscribeKey : 'demo'
-	 })
+var subscribe = function(callback) {
 
-	function publishSampleMessage() {
-		console
-				.log("Since we're publishing on subscribe connectEvent, we're sure we'll receive the following publish.");
-		var publishConfig = {
-			channel : "hello_world",
-			message : "Hello from PubNub Docs!"
-		}
-		pubnub.publish(publishConfig, function(status, response) {
-			console.log(status, response);
-		})
-	}
+  pubnub = new PubNub({
+    publishKey : 'demo',
+    subscribeKey : 'demo'
+  })
+  
+  pubnub.addListener({
+    message : function(message) {
+      console.log("New Message!!", message);
+    }
+  })
 
-	pubnub.addListener({
-		status : function(statusEvent) {
-			if (statusEvent.category === "PNConnectedCategory") {
-				publishSampleMessage();
-			}
-		},
-		message : function(message) {
-			console.log("New Message!!", message);
-		},
-		presence : function(presenceEvent) {
-			// handle presence
-		}
-	})
+  console.log("Subscribing..");
+  pubnub.subscribe({
+    channels : [ 'test' ]
+  });
 
-	console.log("Subscribing..");
-	pubnub.subscribe({
-		channels : [ 'hello_world' ]
-	});
+  callback(null,"Array of parallel connections");
+
 };
 
 if (require.main === module) {
-	publish();
+  // Number of connections to run on server.
+  var connections = 10;
+  // Number of seconds to ramp up over.
+  var ramp = 5;
+  // Concurrent connections attempted per second.
+  var rate = Math.ceil(connections / ramp);
+
+  var subscribers = [];
+
+  for (i=0; i < connections; i++) {
+	  subscribers.push(subscribe);
+  }
+  async.parallel(subscribers, function(err, result){
+    console.log(result)
+  });
 } else {
-	console.log('please start via node subscribe.js');
+  console.log('please start via node subscribe.js');
 }
