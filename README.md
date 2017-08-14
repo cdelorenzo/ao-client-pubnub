@@ -12,6 +12,9 @@ PubNub MQTT Client Subscriber
     })
 ```
 
+```sh
+    npm install
+```
 
 ## Execution
 
