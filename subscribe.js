@@ -1,46 +1,38 @@
 var PubNub = require('pubnub')
+var async = require('async')
 
-function publish() {
+//array stack for async parallel
+var subscribers = [];
 
-	 pubnub = new PubNub({
-	 publishKey : 'demo',
-	 subscribeKey : 'demo'
-	 })
+var subscribe = function(callback) {
 
-	function publishSampleMessage() {
-		console
-				.log("Since we're publishing on subscribe connectEvent, we're sure we'll receive the following publish.");
-		var publishConfig = {
-			channel : "hello_world",
-			message : "Hello from PubNub Docs!"
-		}
-		pubnub.publish(publishConfig, function(status, response) {
-			console.log(status, response);
-		})
-	}
+	pubnub = new PubNub({
+		publishKey : 'demo',
+		subscribeKey : 'demo'
+	})
 
 	pubnub.addListener({
-		status : function(statusEvent) {
-			if (statusEvent.category === "PNConnectedCategory") {
-				publishSampleMessage();
-			}
-		},
 		message : function(message) {
 			console.log("New Message!!", message);
-		},
-		presence : function(presenceEvent) {
-			// handle presence
 		}
 	})
 
 	console.log("Subscribing..");
 	pubnub.subscribe({
-		channels : [ 'hello_world' ]
+		channels : [ 'test' ]
 	});
+
+	callback(null,"Array of parallel connections");
+
 };
 
 if (require.main === module) {
-	publish();
+	subscribers.push(subscribe);
+	//test two connections
+	subscribers.push(subscribe);
+	async.parallel(subscribers, function(err, result){
+		console.log(result)
+	})
 } else {
 	console.log('please start via node subscribe.js');
 }
