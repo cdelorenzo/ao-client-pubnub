@@ -37,7 +37,7 @@ pubnub.addListener({
     console.log("date=" + now +
         ",hostname=" + hostname +
         ",workerid=" + "" +
-        ",etag=" + sequenceMessage +
+        ",etag=" + "" +
         ",status=" + "" +
         ",elapsed_time_ms=" + "" )
    }
