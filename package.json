@@ -1,5 +1,5 @@
 {
-   "name":"ao_client_pubnub",
+   "name":"ao-client-pubnub",
    "description":"MQTT Websocket PubNub Client Subscriber",
    "version":"0.1.0",
    "main":"subscribe.js",
@@ -8,16 +8,17 @@
    },
    "repository":{
       "type":"git",
-      "url":"https://github.com/tba/my_package.git"
+      "url":"https://github.com/cdelorenzo/ao-client-pubnub.git"
    },
    "dependencies":{
       "pubnub":"4.13.0",
-      "async":"2.5.0"
+      "async":"2.5.0",
+      "minimist": "1.2.0"
    },
    "keywords":[
       "node.js"
    ],
    "author":"",
-   "license":"ISC",
+   "license":"MIT",
    "readmeFilename":"README.md"
 }
