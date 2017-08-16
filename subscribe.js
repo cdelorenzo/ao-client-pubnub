@@ -23,9 +23,9 @@ var subscribe = function(callback) {
 
       // Print full hostname if there is no "."
       if((hostname.indexOf(".")) == -1) {
-          var shortHostname = hostname.substr(0,  hostname.indexOf("."));
-      } else {
           shortHostname = hostname;
+      } else {
+          var shortHostname = hostname.substr(0,  hostname.indexOf("."));
       }
 
       console.log(message.message.Date + ' ' + shortHostname +
