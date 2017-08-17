@@ -16,8 +16,6 @@ var subscribe = function(subID) {
        ssl: true
     })
 
-    pubnub._config.setHeartbeatInterval(0);
-
     pubnub.addListener({
       message : function(message) {
         // Calculate Latency
