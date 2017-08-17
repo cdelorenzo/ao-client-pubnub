@@ -3,44 +3,40 @@ var async = require('async')
 var os = require("os");
 var config = require('./config.json');
 
-var hostname = os.hostname();
+var workerID = process.argv[2];
 
-var subscribe = function(callback) {
+var subscribe = function(subID) {
 
-  pubnub = new PubNub({
-     publishKey : config.publishKey,
-     subscribeKey : config.subscribeKey,
-     ssl: true
-  })
+  return function (callback) {
 
-  pubnub.addListener({
-    message : function(message) {
-      // Calculate Latency
-      var now = new Date();
-      var sent = new Date(message.message.Date);
-      var diff = now - sent;
-      // Reduce size of hostname to save on log line size
+    var subscriber = workerID + '_' + subID;
+    pubnub = new PubNub({
+       publishKey : config.publishKey,
+       subscribeKey : config.subscribeKey,
+       ssl: true
+    })
 
-      // Print full hostname if there is no "."
-      if((hostname.indexOf(".")) == -1) {
-          shortHostname = hostname;
-      } else {
-          var shortHostname = hostname.substr(0,  hostname.indexOf("."));
+    pubnub.addListener({
+      message : function(message) {
+        // Calculate Latency
+        var now = new Date();
+        var sent = new Date(message.message.Date);
+        var diff = now - sent;
+        // Reduce size of hostname to save on log line size
+
+        console.log(message.message.Date + ' ' + subscriber +
+          ' ' + message.message['E-Tag'] + ' ' + message.message.Status +
+          ' ' + diff);
       }
 
-      console.log(message.message.Date + ' ' + shortHostname +
-        ' ' + message.message['E-Tag'] + ' ' + message.message.Status +
-        ' ' + diff);
-    }
+    })
 
-  })
+    pubnub.subscribe({
+      channels : [ 'test' ]
+    });
 
-  pubnub.subscribe({
-    channels : [ 'test' ]
-  });
-
-  callback(null,"connected and subscribed");
-
+    callback(null, 'subscriber ' + subscriber + ' initialised');
+  }
 };
 
 if (require.main === module) {
@@ -63,9 +59,9 @@ if (require.main === module) {
 
   setTimeout(function request() {
     subscribers.length = 0
-    subscribers.push(subscribe);
+    subscribers.push(subscribe(count));
     async.parallel(subscribers, function(err, result){
-      console.log("Connection: " + count + ' ' + result )
+      console.log((new Date()).toISOString() + " connection: " + count + ' ' + result )
     });
 
     if(count == connections){
