@@ -12,8 +12,7 @@
    },
    "dependencies":{
       "pubnub":"4.14.0",
-      "async":"2.5.0",
-      "minimist": "1.2.0"
+      "async":"2.5.0"
    },
    "keywords":[
       "node.js"

@@ -1,6 +1,5 @@
 {
-  "publishKey": "pub-c-xxxxxxxxxxxxxxxxxxxxx",
-  "subscribeKey": "sub-c-xxxxxxxxxxxxxxxxxxxxx",
+  "subscribeKey":"sub-c-xxxxxxxxxxxxxxxxxxxxx",
   "connections":"5",
   "ramp":"5"
 }
