@@ -95,7 +95,7 @@ if (require.main === module) {
     subscribers.length = 0
     subscribers.push(subscribe(count));
     async.parallel(subscribers, function(err, result){
-      console.log((new Date()).toISOString() + ' ' + region + ' ' + result )
+      //console.log((new Date()).toISOString() + ' ' + region + ' ' + result )
     });
 
     if(count == connections){
