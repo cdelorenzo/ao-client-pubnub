@@ -15,7 +15,8 @@ var subscribe = function(subID) {
     var subscriber = workerID + '_' + subID;
     pubnub = new PubNub({
        subscribeKey: config.subscribeKey,
-       ssl: true
+       ssl: true,
+       keepAlive: true
        // Add for debugging purposes only.  Do not enable during load test
        //logVerbosity: "true"
     })
