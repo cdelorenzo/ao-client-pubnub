@@ -14,11 +14,17 @@ var subscribe = function(subID) {
 
     var subscriber = workerID + '_' + subID;
     pubnub = new PubNub({
-       subscribeKey: config.subscribeKey,
-       ssl: true,
-       keepAlive: true
-       // Add for debugging purposes only.  Do not enable during load test
-       //logVerbosity: "true"
+      subscribeKey: config.subscribeKey,
+      ssl: true,
+      keepAlive: true,
+      keepAliveSettings: {
+        maxSockets: 100,
+        maxFreeSockets: 10,
+        timeout: 100000, // should be freeSocketKeepAliveTimeout * 2
+        freeSocketKeepAliveTimeout: 50000
+      }
+      // Add for debugging purposes only.  Do not enable during load test
+      //logVerbosity: "true"
     })
 
     // Ensure this is set to 0.  Will not perform a heartbeat
