@@ -1,5 +1,6 @@
 {
-  "subscribeKey":"sub-c-xxxxxxxxxxxxxxxxxxxxx",
+  "key":"xxxxx.xxxxx:xxxxxxxxxx",
+  "environment":"ta",
   "connections":"5",
   "ramp":"5"
 }

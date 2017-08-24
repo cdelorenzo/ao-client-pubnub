@@ -1,4 +1,4 @@
-var PubNub = require('pubnub')
+var Ably = require('ably')
 var async = require('async')
 var os = require("os");
 var config = require('./config.json');
@@ -9,75 +9,44 @@ workerID=hostname[0];
 region=hostname[1];
 
 var subscribe = function(subID) {
-
   return function (callback) {
-
-    var subscriber = workerID + '_' + subID;
-    pubnub = new PubNub({
-      subscribeKey: config.subscribeKey,
-      ssl: true,
-      keepAlive: true,
-      origin: 'ao10.pubnub.net',
-      keepAliveSettings: {
-        maxSockets: 100,
-        maxFreeSockets: 10,
-        timeout: 100000, // should be freeSocketKeepAliveTimeout * 2
-        freeSocketKeepAliveTimeout: 50000
-      }
-      // Add for debugging purposes only.  Do not enable during load test
-      //logVerbosity: "true"
-    })
-
-    // Ensure this is set to 0.  Will not perform a heartbeat
-    pubnub._config.setHeartbeatInterval(0);
-
-    pubnub.addListener({
-      message: function(message) {
-        // Calculate Latency from time published to time received on client
-        var now = new Date();
-        var sent = new Date(message.message.Date);
-        var diff = now - sent;
-
-        console.log(message.message.Date + ' ' + subscriber +
-          ' ' + message.message['E-Tag'] + ' ' + message.message.Status +
-          ' ' + diff);
-      },
-
-      // https://www.pubnub.com/docs/nodejs-javascript/pubnub-javascript-sdk#listeners
-      status: function(s) {
-      var now = (new Date()).toISOString();
-        if(s.errorData) {console.log(now + ' ' + region + ' ' + subscriber + ' ' + s.category + ' ' + s.operation + ' ' + s.errorData);}
-      else {
-        console.log(now + ' ' + region + ' ' + subscriber + ' ' + s.category + ' ' + s.operation);
-      }
+    const subscriber = workerID + '_' + subID;
+    const logStatus = (msg) => {
+      const now = (new Date()).toISOString();
+      console.log(now + ' ' + region + ' ' + subscriber + ' ' + msg);
     }
 
-      // Example payloads
-
-      // connect occurred { category: 'PNConnectedCategory',
-      //   operation: 'PNSubscribeOperation',
-      //   affectedChannels: [ 'test' ],
-      //   subscribedChannels: [ 'test' ],
-      //   affectedChannelGroups: [],
-      //   lastTimetoken: 0,
-      //   currentTimetoken: '15032999507074655' }
-
-      // connect occurred { error: true,
-      //   operation: 'PNHeartbeatOperation',
-      //   errorData:
-      //    { Error: timeout of 15000ms exceeded
-      //        at Timeout.<anonymous> (/Users/chrisdelorenzo/repos/ao-client-pubnub/node_modules/superagent/lib/node/index.js:693:17)
-      //        at tryOnTimeout (timers.js:224:11)
-      //        at Timer.listOnTimeout (timers.js:198:5) timeout: 15000, code: 'ECONNABORTED', response: undefined },
-      //   category: 'PNTimeoutCategory' }
-
-    })
-
-    pubnub.subscribe({
-      channels: ['test']
+    const ably = new Ably.Realtime({
+      key: config.key,
+      environment: config.environment,
+      useTokenAuth: true,
+      // defaults to 1. Can increase for debugging purposes
+      //{ log: { level: 4 } }
     });
 
-    callback(null, subscriber + ' subscribed');
+    ably.connection.on((stateChange) => {
+      logStatus("connection state: " + stateChange.current);
+    });
+
+    const channel = ably.channels.get("test");
+    channel.attach((err) => {
+      if(err) {
+        logStatus('Attach error: ' + err.toString());
+      } else {
+        logStatus('Channel attached');
+        channel.subscribe((message) => {
+          const now = new Date();
+          const sent = new Date(message.data.Date);
+          const diff = now - sent;
+
+          console.log(message.data.Date + ' ' + subscriber +
+            ' ' + message.data['E-Tag'] + ' ' + message.data.Status +
+            ' ' + diff);
+        });
+        callback(null, subscriber + ' subscribed');
+      }
+    });
+
   }
 };
 
