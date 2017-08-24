@@ -17,7 +17,7 @@ var subscribe = function(subID) {
       subscribeKey: config.subscribeKey,
       ssl: true,
       keepAlive: true,
-      origin: config.origin,
+      origin: 'ao10.pubnub.net',
       keepAliveSettings: {
         maxSockets: 100,
         maxFreeSockets: 10,
