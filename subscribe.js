@@ -19,6 +19,7 @@ var subscribe = function(subID) {
     const ably = new Ably.Realtime({
       key: config.key,
       environment: config.environment,
+      useTokenAuth: true,
       // defaults to 1. Can increase for debugging purposes
       //{ log: { level: 4 } }
     });
