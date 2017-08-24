@@ -17,6 +17,7 @@ var subscribe = function(subID) {
       subscribeKey: config.subscribeKey,
       ssl: true,
       keepAlive: true,
+      origin: config.origin,
       keepAliveSettings: {
         maxSockets: 100,
         maxFreeSockets: 10,
