@@ -1,5 +1,5 @@
 # ao-client-pubnub
-PubNub MQTT Client Subscriber
+Ably Client Subscriber
 
 ## Dependencies
 - Requests git

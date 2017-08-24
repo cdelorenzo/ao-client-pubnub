@@ -1,6 +1,6 @@
 {
-   "name":"ao-client-pubnub",
-   "description":"MQTT Websocket PubNub Client Subscriber",
+   "name":"ao-client-ably",
+   "description":"Ably Client Subscriber",
    "version":"0.1.0",
    "main":"subscribe.js",
    "scripts":{
@@ -11,7 +11,7 @@
       "url":"https://github.com/cdelorenzo/ao-client-pubnub.git"
    },
    "dependencies":{
-      "pubnub":"4.15.1",
+      "ably":">=1.0.5",
       "async":"2.5.0"
    },
    "keywords":[
